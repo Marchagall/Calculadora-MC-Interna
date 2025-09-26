@@ -273,7 +273,7 @@
     var total = 0;
     for (var i = 0; i < sizes.length; i++) {
       var quantity = parseInt(document.getElementById("quantity" + (i + 1)).value || 0);
-      var price = interestCheckbox.checked ? customPrices[i] * 1.25 : customPrices[i];
+      var price = interestCheckbox.checked ? customPrices[i] * 1.4 : customPrices[i];
       total += quantity * price;
     }
     document.getElementById("totalPrice").textContent = "$" + formatPrice(total);
@@ -283,7 +283,7 @@
 
   function calculateTotalPerSize(index) {
     var quantity = parseInt(document.getElementById("quantity" + index).value || 0);
-    var price = interestCheckbox.checked ? customPrices[index - 1] * 1.25 : customPrices[index - 1];
+    var price = interestCheckbox.checked ? customPrices[index - 1] * 1.4 : customPrices[index - 1];
     var totalPerSize = quantity * price;
     document.getElementById("totalPerSize" + index).textContent = "$" + formatPrice(totalPerSize);
   }
@@ -342,4 +342,5 @@
 
 </body>
 </html>
+
 
