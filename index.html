@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Calculadora de Precio de Fotos</title>
@@ -55,14 +57,14 @@
       justify-content: center;
       align-items: center;
       margin-top: 10px;
-      font-size: 20px;
+      font-size: 10px;
     }
     .total-price-label {
-      font-size: 30px;
+      font-size: 25px;
       margin-right: 10px;
     }
     .total-price-value {
-      font-size: 30px;
+      font-size: 20px;
       text-align: right;
     }
     .total-per-size {
@@ -117,12 +119,13 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
+	  text-align: center;
     }
     .summary th,
     .summary td {
       padding: 6px;
       border: 1px solid #ddd;
-      text-align: left;
+      text-align: center;
     }
     .summary button {
       margin-top: 10px;
@@ -156,8 +159,7 @@
       <tbody></tbody>
     </table>
     <br>
-    <button onclick="downloadCSV()">Descargar CSV</button>
-    <button onclick="printTable()">Imprimir</button>
+    <button onclick="downloadXLSX()">Descargar XLSX</button>
   </div>
 
   <div class="calculator">
@@ -179,18 +181,18 @@
 
 <script>
   const sizes = [
-    { size: "9cm x 13cm", price: 600 },
-    { size: "10cm x 15cm", price: 700 },
-    { size: "13cm x 18cm", price: 800 },
-    { size: "15cm x 21cm", price: 900 },
-    { size: "20cm x 30cm", price: 2500 },
-    { size: "30cm x 40cm", price: 4500 },
-    { size: "9cm x 13cm Profesional", price: 500 },
-    { size: "10cm x 15cm Profesional", price: 600 },
-    { size: "13cm x 18cm Profesional", price: 700 },
-    { size: "15cm x 21cm Profesional", price: 800 },
-    { size: "20cm x 30cm Profesional", price: 2200 },
-    { size: "30cm x 40cm Profesional", price: 4000 },
+    { size: "9x13", price: 600 },
+    { size: "10x15", price: 700 },
+    { size: "13x18", price: 800 },
+    { size: "15x21", price: 900 },
+    { size: "20x30", price: 2500 },
+    { size: "30x40", price: 4500 },
+    { size: "9x13 Pro", price: 500 },
+    { size: "10x15 Pro", price: 600 },
+    { size: "13x18 Pro", price: 700 },
+    { size: "15x21 Pro", price: 800 },
+    { size: "20x30 Pro", price: 2200 },
+    { size: "30x40 Pro", price: 4000 },
     { size: "Digitalizado", price: 1000 },
     { size: "Hora de Arte", price: 5000 },
     { size: "Revelado", price: 25000 }
@@ -220,23 +222,70 @@
   });
 
   function incrementQuantity(index) {
-    const input = document.getElementById("quantity" + index);
-    input.value = parseInt(input.value || 0) + 1;
-    calculateTotal();
-    calculateTotalPerSize(index);
-    updateLiveSummary();
+  const input = document.getElementById("quantity" + index);
+  const newQty = parseInt(input.value || 0) + 1;
+  input.value = newQty;
+
+  const sizeIndex = index - 1;
+  const sizeInfo = sizes[sizeIndex];
+  const deltaQty = newQty - lastAddedQuantities[sizeIndex];
+  const price = interestCheckbox.checked ? customPrices[sizeIndex] * 1.4 : customPrices[sizeIndex];
+  const deltaTotal = deltaQty * price;
+
+  const existingIndex = summaryData.findIndex(item => item.size === sizeInfo.size);
+  if (existingIndex !== -1) {
+    summaryData[existingIndex].quantity += deltaQty;
+    summaryData[existingIndex].total += deltaTotal;
+  } else {
+    summaryData.push({
+      size: sizeInfo.size,
+      quantity: deltaQty,
+      total: deltaTotal
+    });
   }
 
+  lastAddedQuantities[sizeIndex] = newQty;
+
+  calculateTotal();
+  calculateTotalPerSize(index);
+  reloadSummaryTable();
+}
+
+
   function decrementQuantity(index) {
-    const input = document.getElementById("quantity" + index);
-    const val = parseInt(input.value || 0);
-    if (val > 0) {
-      input.value = val - 1;
-      calculateTotal();
-      calculateTotalPerSize(index);
-      updateLiveSummary();
+  const input = document.getElementById("quantity" + index);
+  const currentQty = parseInt(input.value || 0);
+  if (currentQty > 0) {
+    const newQty = currentQty - 1;
+    input.value = newQty;
+
+    const sizeIndex = index - 1;
+    const sizeInfo = sizes[sizeIndex];
+    const deltaQty = newQty - lastAddedQuantities[sizeIndex];
+    const price = interestCheckbox.checked ? customPrices[sizeIndex] * 1.4 : customPrices[sizeIndex];
+    const deltaTotal = Math.abs(deltaQty) * price;
+
+    // Update summaryData
+    const existingIndex = summaryData.findIndex(item => item.size === sizeInfo.size);
+    if (existingIndex !== -1) {
+      summaryData[existingIndex].quantity += deltaQty;
+      summaryData[existingIndex].total += deltaQty * price;
+
+      // Remove the entry if quantity goes to 0 or below
+      if (summaryData[existingIndex].quantity <= 0) {
+        summaryData.splice(existingIndex, 1);
+      }
     }
+
+    // Update lastAddedQuantities
+    lastAddedQuantities[sizeIndex] = newQty;
+
+    calculateTotal();
+    calculateTotalPerSize(index);
+    reloadSummaryTable();
   }
+}
+
 
   function handleKeyPress(e, index) {
     if (e.keyCode === 13) {
@@ -323,29 +372,63 @@
     });
   }
 
-  function downloadCSV() {
-    let csv = "Tamaño,Cantidad,Total\n";
-    summaryData.forEach(entry => {
-      csv += `"${entry.size}",${entry.quantity},"${formatPrice(entry.total)}"\n`;
-    });
-    const date = new Date().toISOString().split('T')[0];
-    const blob = new Blob([csv], {type: "text/csv"});
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `MC-${date}.csv`;
-    link.click();
-  }
+function getTimeTag() {
+  const hour = new Date().getHours();
+  return hour < 12 ? "Mañana" : "Tarde";
+}
 
-  function printTable() {
-    const printContent = document.getElementById("recordTable").outerHTML;
-    const newWin = window.open("");
-    newWin.document.write(`<html><head><title>Imprimir Resumen</title></head><body>${printContent}</body></html>`);
-    newWin.print();
-    newWin.close();
+async function downloadXLSX() {
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet("Resumen");
+
+  // Header row
+  sheet.addRow(["Tamaño", "Cantidad", "Total"]);
+
+  // Data rows
+  summaryData.forEach(entry => {
+    sheet.addRow([
+      entry.size,
+      entry.quantity,
+      formatPrice(entry.total)
+    ]);
+  });
+
+  // Grand total
+const grandTotal = summaryData.reduce((sum, e) => sum + e.total, 0);
+const totalLabel = `Total: ${formatPrice(grandTotal)}`; // Includes space after colon
+const totalRow = sheet.addRow(["", "", totalLabel]);
+
+// Make the total cell bold
+const lastRowNumber = sheet.rowCount;
+sheet.getRow(lastRowNumber).getCell(3).font = { bold: true };
+
+  // Style all cells
+  sheet.columns.forEach(column => {
+    column.alignment = { horizontal: "center", vertical: "middle" };
+    column.width = 20;
+  });
+
+  // Bold header
+  sheet.getRow(1).font = { bold: true };
+
+  // Save the file
+  const now = new Date();
+  const dateStr = now.toISOString().split("T")[0];
+  const timeTag = getTimeTag();
+  const filename = `MC_${dateStr}_${timeTag}.xlsx`;
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  saveAs(new Blob([buffer]), filename);
+
+  // Format prices with $ and dot as thousand separator
+  function formatPrice(value) {
+    return `$${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
   }
+}
+
+
+
 </script>
 
 </body>
 </html>
-
-
