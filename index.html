@@ -1,151 +1,156 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Calculadora de Precio de Fotos</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
-    .calculator {
-      width: 700px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-      background-color: #f9f9f9;
-      box-sizing: border-box;
-      text-align: center;
-      margin: auto;
-    }
-    .size {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 20px;
-    }
-    .quantity-container {
-      justify-content: right;
-      align-items: center;
-      text-align: right;
-    }
-    .quantity-button {
-      width: 35px;
-      height: 35px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .quantity-input {
-      width: 50px;
-      padding: 9px;
-      margin: 0 1px;
-      text-align: center;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    .total-price-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 10px;
-      font-size: 10px;
-    }
-    .total-price-label {
-      font-size: 25px;
-      margin-right: 10px;
-    }
-    .total-price-value {
-      font-size: 20px;
-      text-align: right;
-    }
-    .total-per-size {
-      font-size: 26px;
-      color: black;
-      width: 10%;
-      text-align: center;
-      margin-bottom: 5px;
-    }
-    .button-container {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 5px;
-    }
-    .button-container button {
-      padding: 8px 16px;
-      border: none;
-      background-color: #4CAF50;
-      color: white;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    hr {
-      border: 1px solid;
-      margin: 2px 0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: left;
-    }
-    .main-container {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      flex-wrap: wrap;
-    }
-    .summary {
-      width: 700px;
-      background-color: #ffffff;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
-    }
-    .summary table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-	  text-align: center;
-    }
-    .summary th,
-    .summary td {
-      padding: 6px;
-      border: 1px solid #ddd;
-      text-align: center;
-    }
-    .summary button {
-      margin-top: 10px;
-      margin-right: 5px;
-      padding: 6px 12px;
-      font-size: 14px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .summary button:hover {
-      background-color: #45a049;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Calculadora de Precio de Fotos</title>
+
+<style>
+body {
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  background: #eef1f5;
+  margin: 0;
+  padding: 10px;
+}
+
+.main-container {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 15px;
+  max-width: 1200px;
+  margin: auto;
+  height: 95vh;
+}
+
+.calculator, .summary {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.summary table {
+  font-size: 13px;
+}
+
+.summary th {
+  background: #f2f2f2;
+}
+
+.summary th, .summary td {
+  padding: 6px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.calculator {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  vertical-align-items: center;
+}
+
+#sizes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.size {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  align-items: center;
+  font-size: 15px;
+  gap: 6px;
+  background: #fafafa;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+
+.total-per-size {
+  min-width: 75px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.quantity-container {
+  display: flex;
+  align-items: center;
+}
+
+.quantity-button {
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  background: #2e7d32;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.quantity-input {
+  width: 40px;
+  height: 26px;
+  text-align: center;
+  margin: 0 3px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #2e7d32;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.total-price-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
+  font-size: 26px;
+}
+
+input[type="checkbox"] {
+  transform: scale(1.8);
+  
+}
+.total-price-value {
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+@media (max-width: 900px) {
+  .main-container {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  #sizes {
+    grid-template-columns: 1fr;
+  }
+  hr {
+  all: unset;
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: #ccc;
+  margin: 10px 0;
+}
+}
+</style>
 </head>
+
 <body>
 
 <div class="main-container">
+
   <div class="summary">
     <h3>Resumen de Operaciones</h3>
     <table id="recordTable">
@@ -159,275 +164,191 @@
       <tbody></tbody>
     </table>
     <br>
-    <button onclick="downloadXLSX()">Descargar XLSX</button>
+    <button onclick="downloadTXT()">Descargar TXT</button>
   </div>
 
   <div class="calculator">
-    <div class="button-container">
-      <button onclick="resetInputs()">Reset</button>
-    </div>
-    <hr>
-    <div id="sizes"></div>
-    <hr>
+  <hr style="all: initial; display: block; width: 100%; height: 2px; background: #eee;">
     <div class="total-price-container">
-      <label for="totalPrice" class="total-price-label">Total:</label>
+      <span>Total:</span>
       <span id="totalPrice" class="total-price-value">$0</span>
-      &nbsp;<span>|</span>
-      <input type="checkbox" id="applyInterest" onchange="calculateTotal();">
-      <label for="applyInterest">Precio Tarjeta hasta 3 cuotas</label>
+      <div class="divider">|</div>
+      <label class="checkbox-label">
+  <input type="checkbox" id="applyInterest" onchange="updateAll()">
+  Tarjeta (6 cuotas)
+</label>
+      <button onclick="addOperation()">Agregar</button>
     </div>
+
+    <hr style="all: initial; display: block; width: 100%; height: 2px; background: #eee;">
+    <div id="sizes"></div>
+    <hr style="all: initial; display: block; width: 100%; height: 2px; background: #eee;">
   </div>
+
 </div>
 
 <script>
-  const sizes = [
-    { size: "9x13", price: 600 },
-    { size: "10x15", price: 700 },
-    { size: "13x18", price: 800 },
-    { size: "15x21", price: 900 },
-    { size: "20x30", price: 2500 },
-    { size: "30x40", price: 4500 },
-    { size: "9x13 Pro", price: 500 },
-    { size: "10x15 Pro", price: 600 },
-    { size: "13x18 Pro", price: 700 },
-    { size: "15x21 Pro", price: 800 },
-    { size: "20x30 Pro", price: 2200 },
-    { size: "30x40 Pro", price: 4000 },
-    { size: "Digitalizado", price: 1000 },
-    { size: "Hora de Arte", price: 5000 },
-    { size: "Revelado", price: 25000 }
-  ];
+const sizes = [
+  { size: "9x13", price: 800 },
+  { size: "10x15", price: 900 },
+  { size: "13x18", price: 1000 },
+  { size: "15x21", price: 1200 },
+  { size: "20x30", price: 3200 },
+  { size: "30x40", price: 5600 },
+  { size: "Carnet Comun", price: 6000 },
+  { size: "Carnet Express", price: 7000 },
+  { size: "Visa/Pasaporte", price: 12000 },
+  { size: "Digitalizado", price: 1000 },
+  { size: "Hora de Arte", price: 5000 },
+  { size: "Revelado", price: 30000 },
+  { size: "9x13 Pro", price: 700 },
+  { size: "10x15 Pro", price: 800 },
+  { size: "13x18 Pro", price: 900 },
+  { size: "15x21 Pro", price: 1100 },
+  { size: "20x30 Pro", price: 2800 },
+  { size: "30x40 Pro", price: 5200 }
+];
 
-  const defaultPrices = sizes.map(s => s.price);
-  let customPrices = [...defaultPrices];
-  let summaryData = [];
-  let lastAddedQuantities = new Array(sizes.length).fill(0);
-  const interestCheckbox = document.getElementById("applyInterest");
+let summaryData = [];
+const interestCheckbox = document.getElementById("applyInterest");
+const container = document.getElementById("sizes");
 
-  const sizesContainer = document.getElementById('sizes');
-  sizes.forEach((size, i) => {
-    const div = document.createElement('div');
-    div.classList.add('size');
-    div.innerHTML = `
-      <span class="total-per-size" id="totalPerSize${i+1}">$0</span>
-      <label>${size.size} - $${formatPrice(size.price)}</label>
-      <div class="quantity-container">
-        <button class="quantity-button" onclick="decrementQuantity(${i+1})">-</button>
-        <input type="text" id="quantity${i+1}" class="quantity-input" value="0" onkeypress="handleKeyPress(event, ${i+1})" onfocus="if(this.value === '0') this.value = ''" onblur="if(this.value === '') this.value = '0'">
-        <button class="quantity-button" onclick="incrementQuantity(${i+1})">+</button>
-      </div>
-    `;
-    sizesContainer.appendChild(div);
-    if (i < sizes.length - 1) sizesContainer.appendChild(document.createElement('hr'));
+function formatPrice(n) {
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function getQty(i) {
+  return Math.max(0, parseInt(document.getElementById("quantity" + i).value) || 0);
+}
+
+function getPrice(i) {
+  const base = sizes[i-1].price;
+  return interestCheckbox.checked ? base * 1.4 : base;
+}
+
+function updateAll() {
+  let total = 0;
+
+  sizes.forEach((_, i) => {
+    const index = i + 1;
+    const qty = getQty(index);
+    const price = getPrice(index);
+    const subtotal = qty * price;
+
+    document.getElementById("totalPerSize" + index).textContent = "$" + formatPrice(subtotal);
+    total += subtotal;
   });
 
-  function incrementQuantity(index) {
-  const input = document.getElementById("quantity" + index);
-  const newQty = parseInt(input.value || 0) + 1;
-  input.value = newQty;
-
-  const sizeIndex = index - 1;
-  const sizeInfo = sizes[sizeIndex];
-  const deltaQty = newQty - lastAddedQuantities[sizeIndex];
-  const price = interestCheckbox.checked ? customPrices[sizeIndex] * 1.4 : customPrices[sizeIndex];
-  const deltaTotal = deltaQty * price;
-
-  const existingIndex = summaryData.findIndex(item => item.size === sizeInfo.size);
-  if (existingIndex !== -1) {
-    summaryData[existingIndex].quantity += deltaQty;
-    summaryData[existingIndex].total += deltaTotal;
-  } else {
-    summaryData.push({
-      size: sizeInfo.size,
-      quantity: deltaQty,
-      total: deltaTotal
-    });
-  }
-
-  lastAddedQuantities[sizeIndex] = newQty;
-
-  calculateTotal();
-  calculateTotalPerSize(index);
-  reloadSummaryTable();
+  document.getElementById("totalPrice").textContent = "$" + formatPrice(total);
 }
 
+function incrementQuantity(i) {
+  const input = document.getElementById("quantity" + i);
+  input.value = getQty(i) + 1;
+  updateAll();
+}
 
-  function decrementQuantity(index) {
-  const input = document.getElementById("quantity" + index);
-  const currentQty = parseInt(input.value || 0);
-  if (currentQty > 0) {
-    const newQty = currentQty - 1;
-    input.value = newQty;
-
-    const sizeIndex = index - 1;
-    const sizeInfo = sizes[sizeIndex];
-    const deltaQty = newQty - lastAddedQuantities[sizeIndex];
-    const price = interestCheckbox.checked ? customPrices[sizeIndex] * 1.4 : customPrices[sizeIndex];
-    const deltaTotal = Math.abs(deltaQty) * price;
-
-    // Update summaryData
-    const existingIndex = summaryData.findIndex(item => item.size === sizeInfo.size);
-    if (existingIndex !== -1) {
-      summaryData[existingIndex].quantity += deltaQty;
-      summaryData[existingIndex].total += deltaQty * price;
-
-      // Remove the entry if quantity goes to 0 or below
-      if (summaryData[existingIndex].quantity <= 0) {
-        summaryData.splice(existingIndex, 1);
-      }
-    }
-
-    // Update lastAddedQuantities
-    lastAddedQuantities[sizeIndex] = newQty;
-
-    calculateTotal();
-    calculateTotalPerSize(index);
-    reloadSummaryTable();
+function decrementQuantity(i) {
+  const input = document.getElementById("quantity" + i);
+  if (getQty(i) > 0) {
+    input.value = getQty(i) - 1;
+    updateAll();
   }
 }
 
+sizes.forEach((s, i) => {
+  const index = i + 1;
 
-  function handleKeyPress(e, index) {
-    if (e.keyCode === 13) {
-      const input = document.getElementById("quantity" + index);
-      input.value = Math.max(0, parseInt(input.value || 0));
-      calculateTotal();
-      calculateTotalPerSize(index);
-      updateLiveSummary();
+  const div = document.createElement("div");
+  div.className = "size";
+
+  div.innerHTML = `
+    <span id="totalPerSize${index}" class="total-per-size">$0</span>
+    <label>${s.size} - $${formatPrice(s.price)}</label>
+    <div class="quantity-container">
+      <button onclick="decrementQuantity(${index})">-</button>
+      <input id="quantity${index}" class="quantity-input" value="0"
+        oninput="updateAll()"
+        onfocus="if(this.value==='0')this.value=''"
+        onblur="if(this.value==='')this.value='0'">
+      <button onclick="incrementQuantity(${index})">+</button>
+    </div>
+  `;
+
+  container.appendChild(div);
+});
+
+function addOperation() {
+  sizes.forEach((s, i) => {
+    const qty = getQty(i+1);
+    if (qty <= 0) return;
+
+    const total = qty * getPrice(i+1);
+    const existing = summaryData.find(x => x.size === s.size);
+
+    if (existing) {
+      existing.quantity += qty;
+      existing.total += total;
+    } else {
+      summaryData.push({ size: s.size, quantity: qty, total });
     }
-  }
+  });
 
-  function calculateTotal() {
-    let total = 0;
-    sizes.forEach((s, i) => {
-      const qty = parseInt(document.getElementById("quantity" + (i + 1)).value || 0);
-      const price = interestCheckbox.checked ? customPrices[i] * 1.4 : customPrices[i];
-      total += qty * price;
-    });
-    document.getElementById("totalPrice").textContent = "$" + formatPrice(total);
-  }
+  renderTable();
+  resetInputs();
+}
 
-  function calculateTotalPerSize(index) {
-    const qty = parseInt(document.getElementById("quantity" + index).value || 0);
-    const price = interestCheckbox.checked ? customPrices[index - 1] * 1.4 : customPrices[index - 1];
-    const total = qty * price;
-    document.getElementById("totalPerSize" + index).textContent = "$" + formatPrice(total);
-  }
+function renderTable() {
+  const tbody = document.querySelector("#recordTable tbody");
+  tbody.innerHTML = "";
 
-  function formatPrice(price) {
-    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  }
+  summaryData.forEach(r => {
+    const row = `<tr>
+      <td>${r.size}</td>
+      <td>${r.quantity}</td>
+      <td>$${formatPrice(r.total)}</td>
+    </tr>`;
+    tbody.innerHTML += row;
+  });
+}
 
-  function resetInputs() {
-    document.querySelectorAll('.quantity-input').forEach((input, index) => {
-      input.value = 0;
-      lastAddedQuantities[index] = 0;
-    });
-    document.querySelectorAll('.total-per-size').forEach(el => el.textContent = "$0");
-    interestCheckbox.checked = false;
-    calculateTotal();
-  }
-
-  function updateLiveSummary() {
-    sizes.forEach((s, i) => {
-      const currentQty = parseInt(document.getElementById("quantity" + (i + 1)).value || 0);
-      const alreadyAddedQty = lastAddedQuantities[i];
-      const deltaQty = currentQty - alreadyAddedQty;
-
-      if (deltaQty <= 0) return;
-
-      const price = interestCheckbox.checked ? customPrices[i] * 1.4 : customPrices[i];
-      const deltaTotal = deltaQty * price;
-
-      const existingIndex = summaryData.findIndex(item => item.size === s.size);
-
-      if (existingIndex >= 0) {
-        summaryData[existingIndex].quantity += deltaQty;
-        summaryData[existingIndex].total += deltaTotal;
-      } else {
-        summaryData.push({
-          size: s.size,
-          quantity: deltaQty,
-          total: deltaTotal
-        });
-      }
-
-      lastAddedQuantities[i] = currentQty;
-    });
-
-    reloadSummaryTable();
-  }
-
-  function reloadSummaryTable() {
-    const tbody = document.querySelector("#recordTable tbody");
-    tbody.innerHTML = "";
-    summaryData.forEach(entry => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${entry.size}</td>
-        <td>${entry.quantity}</td>
-        <td>$${formatPrice(entry.total)}</td>
-      `;
-      tbody.appendChild(row);
-    });
-  }
+function resetInputs() {
+  document.querySelectorAll(".quantity-input").forEach(i => i.value = 0);
+  document.querySelectorAll(".total-per-size").forEach(i => i.textContent = "$0");
+  interestCheckbox.checked = false;
+  updateAll();
+}
 
 function getTimeTag() {
-  const hour = new Date().getHours();
-  return hour < 12 ? "Mañana" : "Tarde";
+  return new Date().getHours() < 14 ? "Mañana" : "Tarde";
 }
 
-async function downloadXLSX() {
-  const workbook = new ExcelJS.Workbook();
-  const sheet = workbook.addWorksheet("Resumen");
-
-  // Header row
-  sheet.addRow(["Tamaño", "Cantidad", "Total"]);
-
-  // Data rows
-  summaryData.forEach(entry => {
-    sheet.addRow([
-      entry.size,
-      entry.quantity,
-      formatPrice(entry.total)
-    ]);
-  });
-
-  // Grand total
-const grandTotal = summaryData.reduce((sum, e) => sum + e.total, 0);
-const totalLabel = `Total: ${formatPrice(grandTotal)}`; // Includes space after colon
-const totalRow = sheet.addRow(["", "", totalLabel]);
-
-// Make the total cell bold
-const lastRowNumber = sheet.rowCount;
-sheet.getRow(lastRowNumber).getCell(3).font = { bold: true };
-
-  // Style all cells
-  sheet.columns.forEach(column => {
-    column.alignment = { horizontal: "center", vertical: "middle" };
-    column.width = 20;
-  });
-
-  // Bold header
-  sheet.getRow(1).font = { bold: true };
-
-  // Save the file
+function downloadTXT() {
   const now = new Date();
-  const dateStr = now.toISOString().split("T")[0];
-  const timeTag = getTimeTag();
-  const filename = `MC_${dateStr}_${timeTag}.xlsx`;
+  const date = now.toLocaleDateString('es-AR').replace(/\//g, "-");
 
-  const buffer = await workbook.xlsx.writeBuffer();
-  saveAs(new Blob([buffer]), filename);
+  let text = `Pedidos de Fotos - ${date} ${getTimeTag()}\n\n`;
+  text += "Tamaño".padEnd(20) + "Cantidad".padStart(10) + "Total".padStart(15) + "\n";
+  text += "---------------------------------------------\n";
 
-  // Format prices with $ and dot as thousand separator
-  function formatPrice(value) {
-    return `$${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
-  }
+  let total = 0;
+
+  summaryData.forEach(i => {
+    text += i.size.padEnd(20)
+      + i.quantity.toString().padStart(10)
+      + ("$" + formatPrice(i.total)).padStart(15) + "\n";
+    total += i.total;
+  });
+
+  text += "---------------------------------------------\n";
+  text += "TOTAL".padEnd(20) + "".padStart(10) + ("$" + formatPrice(total)).padStart(15);
+
+  const blob = new Blob([text], { type: "text/plain" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `Pedidos de Fotos ${date} ${getTimeTag()}.txt`;
+  a.click();
 }
-
-
-
 </script>
 
 </body>
