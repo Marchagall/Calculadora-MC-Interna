@@ -223,7 +223,7 @@ function getQty(i) {
 
 function getPrice(i) {
   const base = sizes[i-1].price;
-  return interestCheckbox.checked ? base * 1.4 : base;
+  return interestCheckbox.checked ? Math.round(base * 140 / 100) : base;
 }
 
 function updateAll() {
@@ -349,6 +349,9 @@ function downloadTXT() {
   a.download = `Pedidos de Fotos ${date} ${getTimeTag()}.txt`;
   a.click();
 }
+window.addEventListener("load", () => {
+  resetInputs();
+});
 </script>
 
 </body>
