@@ -235,11 +235,19 @@ function updateAll() {
     const price = getPrice(index);
     const subtotal = qty * price;
 
-    document.getElementById("totalPerSize" + index).textContent = "$" + formatPrice(subtotal);
+    // Subtotal por tamaño
+    document.getElementById("totalPerSize" + index).textContent =
+      "$" + formatPrice(subtotal);
+
+    // 👇 ACTUALIZA EL PRECIO UNITARIO
+    const label = document.getElementById("priceLabel" + index);
+    label.textContent = `${sizes[i].size} - $${formatPrice(price)}`;
+
     total += subtotal;
   });
 
-  document.getElementById("totalPrice").textContent = "$" + formatPrice(total);
+  document.getElementById("totalPrice").textContent =
+    "$" + formatPrice(total);
 }
 
 function incrementQuantity(i) {
@@ -264,7 +272,7 @@ sizes.forEach((s, i) => {
 
   div.innerHTML = `
     <span id="totalPerSize${index}" class="total-per-size">$0</span>
-    <label>${s.size} - $${formatPrice(s.price)}</label>
+    <label id="priceLabel${index}">${s.size} - $${formatPrice(s.price)}</label>
     <div class="quantity-container">
       <button onclick="decrementQuantity(${index})">-</button>
       <input id="quantity${index}" class="quantity-input" value="0"
