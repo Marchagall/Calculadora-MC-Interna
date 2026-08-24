@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Calculadora de Precio de Fotos</title>
+<title>Calculadora de Precio de Fotos - Marc Chagall</title>
 
 <style>
 body {
@@ -31,8 +31,14 @@ body {
   flex-direction: column;
 }
 
+.summary {
+  overflow: hidden;
+}
+
 .summary table {
   font-size: 13px;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .summary th {
@@ -108,6 +114,14 @@ button {
   cursor: pointer;
 }
 
+button:hover {
+  opacity: 0.9;
+}
+
+.reset-button {
+  background: #c62828;
+}
+
 .total-price-container {
   display: flex;
   align-items: center;
@@ -119,14 +133,188 @@ button {
 
 input[type="checkbox"] {
   transform: scale(1.8);
-  
 }
+
 .total-price-value {
   font-weight: bold;
   color: #2e7d32;
 }
 
+/* ================================
+   PRESUPUESTO
+   ================================ */
+
+.budget-header {
+  text-align: center;
+  border-bottom: 2px solid #222;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+
+  /* OCULTO EN PANTALLA */
+  display: none;
+}
+
+.budget-header h2 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: 1px;
+}
+
+.budget-header p {
+  margin: 3px 0;
+  font-size: 12px;
+}
+
+.budget-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.budget-title h3 {
+  margin: 0;
+}
+
+.budget-date {
+  font-size: 12px;
+  color: #555;
+}
+
+.budget-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.budget-table th {
+  background: #eeeeee;
+  border: 1px solid #ccc;
+  padding: 7px 5px;
+}
+
+.budget-table td {
+  border: 1px solid #ccc;
+  padding: 7px 5px;
+}
+
+.budget-table .item {
+  text-align: left;
+}
+
+.budget-table .number {
+  text-align: right;
+}
+
+.budget-total {
+  margin-top: 12px;
+  border-top: 2px solid #222;
+  padding-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.budget-total-value {
+  margin-left: 20px;
+  color: #2e7d32;
+}
+
+.budget-empty {
+  text-align: center;
+  color: #777;
+  font-size: 13px;
+  padding: 20px 5px;
+}
+
+.budget-actions {
+  margin-top: auto;
+  padding-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.print-button {
+  width: 100%;
+  background: #444;
+}
+
+/* ================================
+   IMPRESION A4
+   ================================ */
+
+@media print {
+
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+
+  body {
+    background: white;
+    padding: 0;
+    margin: 0;
+  }
+
+  .main-container {
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: auto;
+  }
+
+  .calculator {
+    display: none !important;
+  }
+
+  .summary {
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  .summary h3,
+  .summary > button {
+    display: none !important;
+  }
+
+  .budget-actions {
+    display: none !important;
+  }
+
+  /* MOSTRAR ENCABEZADO SOLO EN PDF */
+  .budget-header {
+    display: block;
+    margin-top: 0;
+    text-align: center;
+    width: 100%;
+  }
+
+  .budget-table {
+    font-size: 12px;
+  }
+
+  .budget-table th,
+  .budget-table td {
+    border: 1px solid #999;
+  }
+
+  .budget-total {
+    color: #000;
+  }
+
+  .budget-total-value {
+    color: #000;
+  }
+}
+
 @media (max-width: 900px) {
+
   .main-container {
     grid-template-columns: 1fr;
     height: auto;
@@ -135,14 +323,15 @@ input[type="checkbox"] {
   #sizes {
     grid-template-columns: 1fr;
   }
+
   hr {
-  all: unset;
-  display: block;
-  width: 100%;
-  height: 1px;
-  background-color: #ccc;
-  margin: 10px 0;
-}
+    all: unset;
+    display: block;
+    width: 100%;
+    height: 1px;
+    background-color: #ccc;
+    margin: 10px 0;
+  }
 }
 </style>
 </head>
@@ -151,49 +340,100 @@ input[type="checkbox"] {
 
 <div class="main-container">
 
+  <!-- ================================
+       PRESUPUESTO
+       ================================ -->
+
   <div class="summary">
-    <h3>Resumen de Operaciones</h3>
-    <table id="recordTable">
+
+    <div class="budget-header">
+      <h2>MARC CHAGALL</h2>
+      <p>Florida 11 · Tel. 422-5843 · WhatsApp +54 9 3875 76-8064</p>
+      <p>ventas@marcchagall.com.ar · marchagall.gerencia@gmail.com</p>
+    </div>
+
+    <div class="budget-title">
+      <h3>Presupuesto</h3>
+      <span id="budgetDate" class="budget-date"></span>
+    </div>
+
+    <table id="recordTable" class="budget-table">
       <thead>
         <tr>
-          <th>Tamaño</th>
+          <th>Ítem</th>
+          <th>Precio unitario</th>
           <th>Cantidad</th>
-          <th>Total</th>
+          <th>Subtotal</th>
         </tr>
       </thead>
+
       <tbody></tbody>
     </table>
-    <br>
-    <button onclick="downloadTXT()">Descargar TXT</button>
+
+    <div id="budgetEmpty" class="budget-empty">
+      No hay operaciones agregadas al presupuesto.
+    </div>
+
+    <div class="budget-total">
+      <span>TOTAL DE LA OPERACIÓN:</span>
+      <span id="budgetTotal" class="budget-total-value">$0</span>
+    </div>
+
+    <div class="budget-actions">
+      <button class="print-button" onclick="printBudget()">
+        Imprimir / Guardar PDF
+      </button>
+    </div>
+
   </div>
 
+
+  <!-- ================================
+       CALCULADORA
+       ================================ -->
+
   <div class="calculator">
-  <hr style="all: initial; display: block; width: 100%; height: 2px; background: #eee;">
+
+    <hr style="all: initial; display: block; width: 100%; height: 2px; background: #eee;">
+
     <div class="total-price-container">
+
       <span>Total:</span>
+
       <span id="totalPrice" class="total-price-value">$0</span>
+
       <div class="divider">|</div>
+
       <label class="checkbox-label">
-  <input type="checkbox" id="applyInterest" onchange="updateAll()">
-  Tarjeta (6 cuotas)
-</label>
+        <input type="checkbox" id="applyInterest" onchange="updateAll()">
+        Tarjeta (6 cuotas)
+      </label>
+
       <button onclick="addOperation()">Agregar</button>
+
+      <button class="reset-button" onclick="resetInputs()">Reset</button>
+
     </div>
 
     <hr style="all: initial; display: block; width: 100%; height: 2px; background: #eee;">
+
     <div id="sizes"></div>
+
     <hr style="all: initial; display: block; width: 100%; height: 2px; background: #eee;">
+
   </div>
 
 </div>
 
+
 <script>
+
 const sizes = [
-  { size: "9x13", price: 900 },
-  { size: "10x15", price: 1000 },
-  { size: "13x18", price: 1100 },
-  { size: "15x21", price: 1300 },
-  { size: "20x30", price: 3500 },
+  { size: "9x13", price: 1500 },
+  { size: "10x15", price: 1500 },
+  { size: "13x18", price: 2000 },
+  { size: "15x21", price: 2500 },
+  { size: "20x30", price: 5000 },
   { size: "30x40", price: 6000 },
   { size: "Carnet Comun", price: 7000 },
   { size: "Carnet Express", price: 9000 },
@@ -201,165 +441,322 @@ const sizes = [
   { size: "Digitalizado", price: 1000 },
   { size: "Hora de Arte", price: 5000 },
   { size: "Revelado", price: 35000 },
-  { size: "9x13 Pro", price: 800 },
-  { size: "10x15 Pro", price: 900 },
-  { size: "13x18 Pro", price: 1000 },
-  { size: "15x21 Pro", price: 1200 },
-  { size: "20x30 Pro", price: 3200 },
+  { size: "9x13 Pro", price: 1300 },
+  { size: "10x15 Pro", price: 1300 },
+  { size: "13x18 Pro", price: 1800 },
+  { size: "15x21 Pro", price: 2200 },
+  { size: "20x30 Pro", price: 4500 },
   { size: "30x40 Pro", price: 5500 }
 ];
 
 let summaryData = [];
+
 const interestCheckbox = document.getElementById("applyInterest");
 const container = document.getElementById("sizes");
+
 
 function formatPrice(n) {
   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+
 function getQty(i) {
-  return Math.max(0, parseInt(document.getElementById("quantity" + i).value) || 0);
+  return Math.max(
+    0,
+    parseInt(document.getElementById("quantity" + i).value) || 0
+  );
 }
+
 
 function getPrice(i) {
+
   const base = sizes[i-1].price;
-  return interestCheckbox.checked ? Math.round(base * 140 / 100) : base;
+
+  return interestCheckbox.checked
+    ? Math.round(base * 140 / 100)
+    : base;
 }
 
+
 function updateAll() {
+
   let total = 0;
 
   sizes.forEach((_, i) => {
+
     const index = i + 1;
+
     const qty = getQty(index);
+
     const price = getPrice(index);
+
     const subtotal = qty * price;
 
-    // Subtotal por tamaño
+
     document.getElementById("totalPerSize" + index).textContent =
       "$" + formatPrice(subtotal);
 
-    // 👇 ACTUALIZA EL PRECIO UNITARIO
-    const label = document.getElementById("priceLabel" + index);
-    label.textContent = `${sizes[i].size} - $${formatPrice(price)}`;
+
+    const label =
+      document.getElementById("priceLabel" + index);
+
+    label.textContent =
+      `${sizes[i].size} - $${formatPrice(price)}`;
+
 
     total += subtotal;
+
   });
+
 
   document.getElementById("totalPrice").textContent =
     "$" + formatPrice(total);
 }
 
+
 function incrementQuantity(i) {
-  const input = document.getElementById("quantity" + i);
+
+  const input =
+    document.getElementById("quantity" + i);
+
   input.value = getQty(i) + 1;
+
   updateAll();
 }
 
+
 function decrementQuantity(i) {
-  const input = document.getElementById("quantity" + i);
+
+  const input =
+    document.getElementById("quantity" + i);
+
   if (getQty(i) > 0) {
+
     input.value = getQty(i) - 1;
+
     updateAll();
   }
 }
 
+
+/* ================================
+   CREAR TAMAÑOS
+   ================================ */
+
 sizes.forEach((s, i) => {
+
   const index = i + 1;
 
   const div = document.createElement("div");
+
   div.className = "size";
 
   div.innerHTML = `
     <span id="totalPerSize${index}" class="total-per-size">$0</span>
-    <label id="priceLabel${index}">${s.size} - $${formatPrice(s.price)}</label>
+
+    <label id="priceLabel${index}">
+      ${s.size} - $${formatPrice(s.price)}
+    </label>
+
     <div class="quantity-container">
+
       <button onclick="decrementQuantity(${index})">-</button>
-      <input id="quantity${index}" class="quantity-input" value="0"
+
+      <input
+        id="quantity${index}"
+        class="quantity-input"
+        value="0"
         oninput="updateAll()"
         onfocus="if(this.value==='0')this.value=''"
         onblur="if(this.value==='')this.value='0'">
+
       <button onclick="incrementQuantity(${index})">+</button>
+
     </div>
   `;
 
   container.appendChild(div);
+
 });
+
+
+/* ================================
+   AGREGAR OPERACION
+   ================================ */
 
 function addOperation() {
+
   sizes.forEach((s, i) => {
-    const qty = getQty(i+1);
+
+    const qty = getQty(i + 1);
+
     if (qty <= 0) return;
 
-    const total = qty * getPrice(i+1);
-    const existing = summaryData.find(x => x.size === s.size);
+    const total = qty * getPrice(i + 1);
+
+    const existing =
+      summaryData.find(x => x.size === s.size);
+
 
     if (existing) {
+
       existing.quantity += qty;
+
       existing.total += total;
+
     } else {
-      summaryData.push({ size: s.size, quantity: qty, total });
+
+      summaryData.push({
+        size: s.size,
+        quantity: qty,
+        total: total,
+        unitPrice: getPrice(i + 1)
+      });
+
     }
+
   });
+
 
   renderTable();
+
   resetInputs();
+
 }
+
+
+/* ================================
+   MOSTRAR PRESUPUESTO
+   ================================ */
 
 function renderTable() {
-  const tbody = document.querySelector("#recordTable tbody");
+
+  const tbody =
+    document.querySelector("#recordTable tbody");
+
   tbody.innerHTML = "";
 
+  let totalOperation = 0;
+
+
   summaryData.forEach(r => {
-    const row = `<tr>
-      <td>${r.size}</td>
-      <td>${r.quantity}</td>
-      <td>$${formatPrice(r.total)}</td>
-    </tr>`;
-    tbody.innerHTML += row;
+
+    const row = document.createElement("tr");
+
+    const unitPrice =
+      r.quantity > 0
+        ? Math.round(r.total / r.quantity)
+        : r.unitPrice;
+
+
+    row.innerHTML = `
+      <td class="item">${r.size}</td>
+      <td class="number">$${formatPrice(unitPrice)}</td>
+      <td class="number">${r.quantity}</td>
+      <td class="number">$${formatPrice(r.total)}</td>
+    `;
+
+
+    tbody.appendChild(row);
+
+    totalOperation += r.total;
+
   });
+
+
+  document.getElementById("budgetTotal").textContent =
+    "$" + formatPrice(totalOperation);
+
+
+  document.getElementById("budgetEmpty").style.display =
+    summaryData.length === 0 ? "block" : "none";
+
+
+  updateBudgetDate();
+
 }
+
+
+/* ================================
+   RESET CALCULADORA
+   ================================ */
 
 function resetInputs() {
-  document.querySelectorAll(".quantity-input").forEach(i => i.value = 0);
-  document.querySelectorAll(".total-per-size").forEach(i => i.textContent = "$0");
+
+  document.querySelectorAll(".quantity-input")
+    .forEach(i => i.value = 0);
+
+  document.querySelectorAll(".total-per-size")
+    .forEach(i => i.textContent = "$0");
+
   interestCheckbox.checked = false;
+
   updateAll();
+
 }
 
-function getTimeTag() {
-  return new Date().getHours() < 14 ? "Mañana" : "Tarde";
-}
 
-function downloadTXT() {
+/* ================================
+   FECHA DEL PRESUPUESTO
+   ================================ */
+
+function updateBudgetDate() {
+
   const now = new Date();
-  const date = now.toLocaleDateString('es-AR').replace(/\//g, "-");
 
-  let text = `Pedidos de Fotos - ${date} ${getTimeTag()}\n\n`;
-  text += "Tamaño".padEnd(20) + "Cantidad".padStart(10) + "Total".padStart(15) + "\n";
-  text += "---------------------------------------------\n";
+  const date =
+    now.toLocaleDateString("es-AR");
 
-  let total = 0;
-
-  summaryData.forEach(i => {
-    text += i.size.padEnd(20)
-      + i.quantity.toString().padStart(10)
-      + ("$" + formatPrice(i.total)).padStart(15) + "\n";
-    total += i.total;
-  });
-
-  text += "---------------------------------------------\n";
-  text += "TOTAL".padEnd(20) + "".padStart(10) + ("$" + formatPrice(total)).padStart(15);
-
-  const blob = new Blob([text], { type: "text/plain" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `Pedidos de Fotos ${date} ${getTimeTag()}.txt`;
-  a.click();
+  document.getElementById("budgetDate").textContent =
+    "Fecha: " + date;
 }
+
+
+/* ================================
+   IMPRIMIR / GUARDAR COMO PDF
+   ================================ */
+
+function printBudget() {
+
+  if (summaryData.length === 0) {
+
+    alert("No hay operaciones agregadas al presupuesto.");
+
+    return;
+  }
+
+  const originalTitle = document.title;
+
+  const now = new Date();
+
+  const day = String(now.getDate()).padStart(2, "0");
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const year = now.getFullYear();
+
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+
+  document.title =
+    `Presupuesto de fotos - ${day}-${month}-${year} ${hours}-${minutes}`;
+
+  window.print();
+
+  document.title = originalTitle;
+}
+
+
+/* ================================
+   INICIALIZACION
+   ================================ */
+
 window.addEventListener("load", () => {
+
   resetInputs();
+
+  updateBudgetDate();
+
 });
+
 </script>
 
 </body>
