@@ -122,17 +122,44 @@ button:hover {
   background: #c62828;
 }
 
+/* ================================
+   TOTAL Y TARJETA
+   ================================ */
+
 .total-price-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 8px;
+  font-size: 36px;
+}
+
+.total-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.card-row {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  gap: 10px;
   font-size: 26px;
 }
 
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 input[type="checkbox"] {
-  transform: scale(1.8);
+  transform: scale(1.5);
 }
 
 .total-price-value {
@@ -332,6 +359,10 @@ input[type="checkbox"] {
     background-color: #ccc;
     margin: 10px 0;
   }
+
+  .total-row {
+    flex-wrap: wrap;
+  }
 }
 </style>
 </head>
@@ -398,20 +429,35 @@ input[type="checkbox"] {
 
     <div class="total-price-container">
 
-      <span>Total:</span>
+      <!-- PRIMERA LINEA -->
+      <div class="total-row">
 
-      <span id="totalPrice" class="total-price-value">$0</span>
+        <span>Total:</span>
 
-      <div class="divider">|</div>
+        <span id="totalPrice" class="total-price-value">$0</span>
 
-      <label class="checkbox-label">
-        <input type="checkbox" id="applyInterest" onchange="updateAll()">
-        Tarjeta (6 cuotas)
-      </label>
+        <button onclick="addOperation()">Agregar</button>
 
-      <button onclick="addOperation()">Agregar</button>
+        <button class="reset-button" onclick="resetInputs()">Reset</button>
 
-      <button class="reset-button" onclick="resetInputs()">Reset</button>
+      </div>
+
+      <!-- SEGUNDA LINEA -->
+      <div class="card-row">
+
+        <label class="checkbox-label">
+
+          <input
+            type="checkbox"
+            id="applyInterest"
+            onchange="updateAll()"
+          >
+
+          Tarjeta (6 cuotas)
+
+        </label>
+
+      </div>
 
     </div>
 
@@ -451,30 +497,41 @@ const sizes = [
 
 let summaryData = [];
 
-const interestCheckbox = document.getElementById("applyInterest");
-const container = document.getElementById("sizes");
+const interestCheckbox =
+  document.getElementById("applyInterest");
+
+const container =
+  document.getElementById("sizes");
 
 
 function formatPrice(n) {
-  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+  return n.toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
 }
 
 
 function getQty(i) {
+
   return Math.max(
     0,
-    parseInt(document.getElementById("quantity" + i).value) || 0
+    parseInt(
+      document.getElementById("quantity" + i).value
+    ) || 0
   );
+
 }
 
 
 function getPrice(i) {
 
-  const base = sizes[i-1].price;
+  const base = sizes[i - 1].price;
 
   return interestCheckbox.checked
     ? Math.round(base * 140 / 100)
     : base;
+
 }
 
 
@@ -493,12 +550,17 @@ function updateAll() {
     const subtotal = qty * price;
 
 
-    document.getElementById("totalPerSize" + index).textContent =
+    document.getElementById(
+      "totalPerSize" + index
+    ).textContent =
       "$" + formatPrice(subtotal);
 
 
     const label =
-      document.getElementById("priceLabel" + index);
+      document.getElementById(
+        "priceLabel" + index
+      );
+
 
     label.textContent =
       `${sizes[i].size} - $${formatPrice(price)}`;
@@ -509,8 +571,11 @@ function updateAll() {
   });
 
 
-  document.getElementById("totalPrice").textContent =
+  document.getElementById(
+    "totalPrice"
+  ).textContent =
     "$" + formatPrice(total);
+
 }
 
 
@@ -519,9 +584,11 @@ function incrementQuantity(i) {
   const input =
     document.getElementById("quantity" + i);
 
-  input.value = getQty(i) + 1;
+  input.value =
+    getQty(i) + 1;
 
   updateAll();
+
 }
 
 
@@ -532,10 +599,13 @@ function decrementQuantity(i) {
 
   if (getQty(i) > 0) {
 
-    input.value = getQty(i) - 1;
+    input.value =
+      getQty(i) - 1;
 
     updateAll();
+
   }
+
 }
 
 
@@ -547,12 +617,19 @@ sizes.forEach((s, i) => {
 
   const index = i + 1;
 
-  const div = document.createElement("div");
+  const div =
+    document.createElement("div");
 
   div.className = "size";
 
   div.innerHTML = `
-    <span id="totalPerSize${index}" class="total-per-size">$0</span>
+
+    <span
+      id="totalPerSize${index}"
+      class="total-per-size"
+    >
+      $0
+    </span>
 
     <label id="priceLabel${index}">
       ${s.size} - $${formatPrice(s.price)}
@@ -560,7 +637,11 @@ sizes.forEach((s, i) => {
 
     <div class="quantity-container">
 
-      <button onclick="decrementQuantity(${index})">-</button>
+      <button
+        onclick="decrementQuantity(${index})"
+      >
+        -
+      </button>
 
       <input
         id="quantity${index}"
@@ -568,11 +649,17 @@ sizes.forEach((s, i) => {
         value="0"
         oninput="updateAll()"
         onfocus="if(this.value==='0')this.value=''"
-        onblur="if(this.value==='')this.value='0'">
+        onblur="if(this.value==='')this.value='0'"
+      >
 
-      <button onclick="incrementQuantity(${index})">+</button>
+      <button
+        onclick="incrementQuantity(${index})"
+      >
+        +
+      </button>
 
     </div>
+
   `;
 
   container.appendChild(div);
@@ -588,14 +675,18 @@ function addOperation() {
 
   sizes.forEach((s, i) => {
 
-    const qty = getQty(i + 1);
+    const qty =
+      getQty(i + 1);
 
     if (qty <= 0) return;
 
-    const total = qty * getPrice(i + 1);
+    const total =
+      qty * getPrice(i + 1);
 
     const existing =
-      summaryData.find(x => x.size === s.size);
+      summaryData.find(
+        x => x.size === s.size
+      );
 
 
     if (existing) {
@@ -607,10 +698,15 @@ function addOperation() {
     } else {
 
       summaryData.push({
+
         size: s.size,
+
         quantity: qty,
+
         total: total,
+
         unitPrice: getPrice(i + 1)
+
       });
 
     }
@@ -632,7 +728,9 @@ function addOperation() {
 function renderTable() {
 
   const tbody =
-    document.querySelector("#recordTable tbody");
+    document.querySelector(
+      "#recordTable tbody"
+    );
 
   tbody.innerHTML = "";
 
@@ -641,19 +739,36 @@ function renderTable() {
 
   summaryData.forEach(r => {
 
-    const row = document.createElement("tr");
+    const row =
+      document.createElement("tr");
+
 
     const unitPrice =
       r.quantity > 0
-        ? Math.round(r.total / r.quantity)
+        ? Math.round(
+            r.total / r.quantity
+          )
         : r.unitPrice;
 
 
     row.innerHTML = `
-      <td class="item">${r.size}</td>
-      <td class="number">$${formatPrice(unitPrice)}</td>
-      <td class="number">${r.quantity}</td>
-      <td class="number">$${formatPrice(r.total)}</td>
+
+      <td class="item">
+        ${r.size}
+      </td>
+
+      <td class="number">
+        $${formatPrice(unitPrice)}
+      </td>
+
+      <td class="number">
+        ${r.quantity}
+      </td>
+
+      <td class="number">
+        $${formatPrice(r.total)}
+      </td>
+
     `;
 
 
@@ -664,12 +779,18 @@ function renderTable() {
   });
 
 
-  document.getElementById("budgetTotal").textContent =
+  document.getElementById(
+    "budgetTotal"
+  ).textContent =
     "$" + formatPrice(totalOperation);
 
 
-  document.getElementById("budgetEmpty").style.display =
-    summaryData.length === 0 ? "block" : "none";
+  document.getElementById(
+    "budgetEmpty"
+  ).style.display =
+    summaryData.length === 0
+      ? "block"
+      : "none";
 
 
   updateBudgetDate();
@@ -683,11 +804,17 @@ function renderTable() {
 
 function resetInputs() {
 
-  document.querySelectorAll(".quantity-input")
+  document
+    .querySelectorAll(".quantity-input")
     .forEach(i => i.value = 0);
 
-  document.querySelectorAll(".total-per-size")
-    .forEach(i => i.textContent = "$0");
+
+  document
+    .querySelectorAll(".total-per-size")
+    .forEach(i =>
+      i.textContent = "$0"
+    );
+
 
   interestCheckbox.checked = false;
 
@@ -702,13 +829,18 @@ function resetInputs() {
 
 function updateBudgetDate() {
 
-  const now = new Date();
+  const now =
+    new Date();
 
   const date =
     now.toLocaleDateString("es-AR");
 
-  document.getElementById("budgetDate").textContent =
+
+  document.getElementById(
+    "budgetDate"
+  ).textContent =
     "Fecha: " + date;
+
 }
 
 
@@ -720,28 +852,54 @@ function printBudget() {
 
   if (summaryData.length === 0) {
 
-    alert("No hay operaciones agregadas al presupuesto.");
+    alert(
+      "No hay operaciones agregadas al presupuesto."
+    );
 
     return;
+
   }
 
-  const originalTitle = document.title;
 
-  const now = new Date();
+  const originalTitle =
+    document.title;
 
-  const day = String(now.getDate()).padStart(2, "0");
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const year = now.getFullYear();
 
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const now =
+    new Date();
+
+
+  const day =
+    String(now.getDate())
+      .padStart(2, "0");
+
+  const month =
+    String(now.getMonth() + 1)
+      .padStart(2, "0");
+
+  const year =
+    now.getFullYear();
+
+
+  const hours =
+    String(now.getHours())
+      .padStart(2, "0");
+
+  const minutes =
+    String(now.getMinutes())
+      .padStart(2, "0");
+
 
   document.title =
     `Presupuesto de fotos - ${day}-${month}-${year} ${hours}-${minutes}`;
 
+
   window.print();
 
-  document.title = originalTitle;
+
+  document.title =
+    originalTitle;
+
 }
 
 
